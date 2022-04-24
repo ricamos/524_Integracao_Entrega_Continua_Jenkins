@@ -102,4 +102,17 @@ resource "null_resource" "ProvisionRemoteHostsIpToAnsibleHosts" {
       "sudo /tmp/run_nexus_container.sh ${element(local.list_name, count.index + 1)}",
     ]
   }
+
+  # Copy in the bash script we want to execute.
+  provisioner "file" {
+    source      = "provision/run_provision.sh"
+    destination = "/tmp/run_provision.sh"
+  }
+  # Change permissions on bash script and execute.
+  provisioner "remote-exec" {
+    inline = [
+      "chmod +x /tmp/run_provision.sh",
+      "sudo /tmp/run_provision.sh ${element(local.list_name, count.index + 1)}",
+    ]
+  }
 }  
